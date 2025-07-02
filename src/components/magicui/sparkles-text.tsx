@@ -27,8 +27,8 @@ const Sparkle: React.FC<Sparkle> = ({ id, x, y, color, delay, scale }) => {
         rotate: [75, 120, 150],
       }}
       transition={{ duration: 0.8, repeat: Infinity, delay }}
-      width="21"
-      height="21"
+      width="17"
+      height="17"
       viewBox="0 0 21 21"
     >
       <path
@@ -98,8 +98,8 @@ export const SparklesText: React.FC<SparklesTextProps> = ({
       const starX = `${Math.random() * 100}%`;
       const starY = `${Math.random() * 100}%`;
       const color = Math.random() > 0.5 ? colors.first : colors.second;
-      const delay = Math.random() * 2;
-      const scale = Math.random() * 1 + 0.3;
+      const delay = Math.random() * 7;
+      const scale = Math.random() * 0.4 + 0.3;
       const lifespan = Math.random() * 10 + 5;
       const id = `${starX}-${starY}-${Date.now()}`;
       return { id, x: starX, y: starY, color, delay, scale, lifespan };
@@ -130,7 +130,7 @@ export const SparklesText: React.FC<SparklesTextProps> = ({
 
   return (
     <div
-      className={cn("text-6xl font-bold", className)}
+      className={cn("text-2xl font-bold", className)}
       {...props}
       style={
         {
