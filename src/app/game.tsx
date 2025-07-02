@@ -16,43 +16,39 @@ export default function Game() {
   const [p1Score, setP1Score] = useState(0);
   const [p2Score, setP2Score] = useState(0);
   const [draws, setDraws] = useState(0);
-  const [roundTarget, setRoundTarget] = useState<number | null>(null);
+  const [targetWins, setTargetWins] = useState<number | null>(null);
   const [gameOver, setGameOver] = useState(false);
   const [finalWinner, setFinalWinner] = useState<string | null>(null);
 
   const winner = calculateWinner(board);
   const isDraw = !winner && board.every(Boolean);
-  const currentRound = p1Score + p2Score + draws + 1;
 
   useEffect(() => {
     if (winner && player1Symbol && player2Symbol) {
       if (winner === player1Symbol) {
         const nextP1 = p1Score + 1;
         setP1Score(nextP1);
-        checkEndOfMatch(nextP1, p2Score, draws);
+        checkEndOfMatch(nextP1, p2Score);
       } else if (winner === player2Symbol) {
         const nextP2 = p2Score + 1;
         setP2Score(nextP2);
-        checkEndOfMatch(p1Score, nextP2, draws);
+        checkEndOfMatch(p1Score, nextP2);
       }
       setTimeout(() => resetBoard(), 1500);
     } else if (isDraw && player1Symbol && player2Symbol) {
-      const nextDraws = draws + 1;
-      setDraws(nextDraws);
-      checkEndOfMatch(p1Score, p2Score, nextDraws);
+      setDraws((d) => d + 1);
       setTimeout(() => resetBoard(), 1500);
     }
-  }, [winner, isDraw, player1Symbol, player2Symbol, p1Score, p2Score, draws]);
+  }, [winner, isDraw, player1Symbol, player2Symbol]);
 
-  function checkEndOfMatch(p1: number, p2: number, d: number) {
-    if (roundTarget && p1 + p2 + d >= roundTarget) {
-      setGameOver(true);
-      if (p1 > p2) {
+  function checkEndOfMatch(p1: number, p2: number) {
+    if (targetWins) {
+      if (p1 >= targetWins) {
+        setGameOver(true);
         setFinalWinner("Player 1");
-      } else if (p2 > p1) {
+      } else if (p2 >= targetWins) {
+        setGameOver(true);
         setFinalWinner("Player 2");
-      } else {
-        setFinalWinner("No one — it's a tie!");
       }
     }
   }
@@ -77,7 +73,7 @@ export default function Game() {
     setDraws(0);
     setPlayer1Symbol(null);
     setPlayer2Symbol(null);
-    setRoundTarget(null);
+    setTargetWins(null);
     setGameOver(false);
     setFinalWinner(null);
     resetBoard();
@@ -90,13 +86,13 @@ export default function Game() {
       <button
         key={idx}
         className={`w-20 h-20 rounded-xl text-4xl flex items-center justify-center
-        border backdrop-blur
-        ${
-          isWinning
-            ? "bg-emerald-300/60 border-emerald-600 shadow-lg scale-105"
-            : "bg-white/30 border-slate-300 hover:bg-white/50 dark:bg-neutral-700/30 dark:border-neutral-500 dark:hover:bg-neutral-600"
-        }
-        transition-all duration-200 ease-in`}
+          border backdrop-blur
+          ${
+            isWinning
+              ? "bg-emerald-300/60 border-emerald-600 shadow-lg scale-105"
+              : "bg-white/30 border-slate-300 hover:bg-white/50 dark:bg-neutral-700/30 dark:border-neutral-500 dark:hover:bg-neutral-600"
+          }
+          transition-all duration-200 ease-in`}
         onClick={() => handleClick(idx)}
       >
         {board[idx]}
@@ -112,7 +108,7 @@ export default function Game() {
           dark:bg-neutral-800/50 dark:border-neutral-600 max-w-md w-full text-center gap-4 animate-pulse">
           <ShineBorder shineColor={["#14B8A6", "#10B981", "#38BDF8"]} />
           <p className="text-2xl font-bold text-emerald-800 dark:text-emerald-300">
-            🎉 Congratulations {finalWinner === "Player 1" ? player1Symbol : finalWinner === "Player 2" ? player2Symbol : "🤝"}! 🎉
+            🎉 Congratulations {finalWinner === "Player 1" ? player1Symbol : player2Symbol}! 🎉
           </p>
           <p className="text-lg text-gray-700 dark:text-gray-300">
             Total draws: {draws}
@@ -126,7 +122,7 @@ export default function Game() {
         </div>
       )}
 
-      {!player1Symbol || !player2Symbol || !roundTarget ? (
+      {!player1Symbol || !player2Symbol || !targetWins ? (
         <section className="flex flex-col items-center gap-6 p-8 rounded-2xl shadow-xl
           bg-white/20 backdrop-blur-md border border-slate-300
           dark:bg-neutral-800/40 dark:border-neutral-600 max-w-md w-full">
@@ -170,16 +166,16 @@ export default function Game() {
           ) : (
             <>
               <p className="text-xl text-gray-800 dark:text-gray-200">
-                Choose rounds (best of):
+                Select how many wins to finish the match:
               </p>
               <div className="flex gap-3">
-                {[3, 5, 7].map((round) => (
+                {[3, 5, 7].map((winCount) => (
                   <button
-                    key={round}
+                    key={winCount}
                     className="px-4 py-2 rounded-full text-xl bg-purple-600 text-white hover:bg-purple-700 shadow"
-                    onClick={() => setRoundTarget(round)}
+                    onClick={() => setTargetWins(winCount)}
                   >
-                    {round}
+                    {winCount} wins
                   </button>
                 ))}
               </div>
@@ -196,15 +192,12 @@ export default function Game() {
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white drop-shadow">
               Tic Tac Toe
             </h1>
-            <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
-              Round {currentRound} of {roundTarget}
-            </h2>
             <div className="grid grid-cols-3 gap-4">
               {board.map((_, idx) => renderSquare(idx))}
             </div>
             <div className="text-lg font-medium text-gray-800 dark:text-gray-200 mt-2 min-h-[1.5em]">
               {winner
-                ? `🎉 Winner: ${winner}`
+                ? `🎉 Winner of this round: ${winner}`
                 : isDraw
                 ? "🤝 It's a draw!"
                 : `Next: ${xIsNext ? player1Symbol : player2Symbol}`}
