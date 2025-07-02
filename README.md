@@ -16,7 +16,5 @@ A fun, customizable Tic Tac Toe game built with **Next.js** and **Tailwind CSS**
 ---
 
 
----
-
 ✅ Simply copy and paste this into a file named `README.md` and you’re good to go! If you’d like, I can help you add badges (like build status or deploy on Vercel) — just let me know.
 
