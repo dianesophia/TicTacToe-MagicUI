@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { ShineBorder } from "@/components/magicui/shine-border";
 import { Meteors } from "@/components/magicui/meteors";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
@@ -72,7 +72,3 @@ function calculateWinnerIndexes(squares: (string | null)[]) {
   return null;
 }
 
-function calculateWinner(squares: (string | null)[]) {
-  const indexes = calculateWinnerIndexes(squares);
-  return indexes ? squares[indexes[0]] : null;
-}
