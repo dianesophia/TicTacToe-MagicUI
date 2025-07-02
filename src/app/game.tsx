@@ -42,7 +42,7 @@ export default function Game() {
       checkEndOfMatch(p1Score, p2Score, nextDraws);
       setTimeout(() => resetBoard(), 1500);
     }
-  }, [winner, isDraw, player1Symbol, player2Symbol]);
+  }, [winner, isDraw, player1Symbol, player2Symbol, p1Score, p2Score, draws]);
 
   function checkEndOfMatch(p1: number, p2: number, d: number) {
     if (roundTarget && p1 + p2 + d >= roundTarget) {
